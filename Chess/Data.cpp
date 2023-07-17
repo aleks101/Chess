@@ -1,25 +1,28 @@
 #include "Data.h"
 
-const string Data::filePath = "Files/Save/";
+const std::string Data::filePath = "Files/Save/";
 
-void Data::CreateFile(string fileName) {
-	string fullPath = filePath + fileName;
-	ofstream data(fullPath, ios::out | ios::binary);
+void Data::CreateFile(std::string fileName) {
+	std::string fullPath = filePath + fileName;
+	std::ofstream data(fullPath, std::ios::out | std::ios::binary);
 	data.close();
 }
-void Data::DeleteFile(string fileName) {
-	string fullPath = filePath + fileName;
+void Data::DeleteFile(std::string fileName) {
+	std::string fullPath = fileName;
+	std::cout << "FILEPATH: " << filePath << std::endl;
+	std::cout << "FILENAME: " << fileName << std::endl;
+	std::cout << "FULLPATH: " << fullPath << std::endl;
 	if (remove(fullPath.c_str()) == 0)
 		printf("Deleted successfully");
 	else
 		printf("Unable to delete the file");
 }
-void Data::WriteToFile(string fileName, vector<PieceMove> moves) {
-	string fullPath = filePath + fileName;
+void Data::WriteToFile(std::string fileName, std::vector<PieceMove> moves) {
+	std::string fullPath = filePath + fileName;
 
-	ofstream data(fullPath, ios::out | ios::binary);
+	std::ofstream data(fullPath, std::ios::out | std::ios::binary);
 	if (!data) {
-		cout << "WRITE: cannot open file " << fullPath << endl;
+		std::cout << "WRITE: cannot open file " << fullPath << std::endl;
 	}
 	else {
 		for (auto& piece : moves) {
@@ -28,17 +31,17 @@ void Data::WriteToFile(string fileName, vector<PieceMove> moves) {
 	}
 	data.close();
 }
-vector<PieceMove> Data::ReadFromFile(string fileName) {
-	string fullPath = fileName;
-	vector<PieceMove> moves;
-	ifstream data(fullPath, ios::binary);
+std::vector<PieceMove> Data::ReadFromFile(std::string fileName) {
+	std::string fullPath = fileName;
+	std::vector<PieceMove> moves;
+	std::ifstream data(fullPath, std::ios::binary);
 	if (!data) {
-		cout << "READ: cannot open file " << fullPath << endl;
+		std::cout << "READ: cannot open file " << fullPath << std::endl;
 	}
 	else {
 		PieceMove move;
 		while (data.read((char*) & move, sizeof(PieceMove))) {
-			cout << move.alp << " : " << move.num << " : " << move.pieceID << " : " << move.team << endl;
+			std::cout << move.alp << " : " << move.num << " : " << move.pieceID << " : " << move.team << std::endl;
 			moves.push_back(move);
 		}
 	}

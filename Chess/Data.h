@@ -3,19 +3,18 @@
 #include <iostream>
 #include <vector>
 #include <fstream>
+#include <cstdio>
 
 #include "PieceMove.h"
-
-using namespace std;
 
 class Data
 {
 private:
-	const static string filePath;
+	const static std::string filePath;
 public:
-	static void CreateFile(string fileName);
-	static void WriteToFile(string fileName, vector<PieceMove> moves);
-	static vector<PieceMove> ReadFromFile(string fileName);
-	static void DeleteFile(string fileName);
+	static void CreateFile(std::string fileName);
+	static void WriteToFile(std::string fileName, std::vector<PieceMove> moves);
+	static std::vector<PieceMove> ReadFromFile(std::string fileName);
+	static void DeleteFile(std::string fileName);
 };
 

@@ -1,6 +1,6 @@
 #include "Board.h"
 
-Board::Board(SDL_Renderer* ren, SDL_Event* _ev) {
+Board::Board(SDL_Renderer* ren, SDL_Event* _ev, bool AI) {
 	renderer = ren;
 	ev = _ev;
 	gameOver = false;
@@ -26,8 +26,10 @@ Board::Board(SDL_Renderer* ren, SDL_Event* _ev) {
 		}
 	}
 	white = new HumanPlayer(*ev, tiles, xMouse, yMouse);
-	//black = new AIPlayer(tiles, 2);
-	black = new HumanPlayer(*ev, tiles, xMouse, yMouse);
+	if(AI)
+		black = new AIPlayer(tiles, 2);
+	else
+		black = new HumanPlayer(*ev, tiles, xMouse, yMouse);
 	white->SetEnemyPlayer(*black);
 	black->SetEnemyPlayer(*white);
 	int tmpPos = 0;
@@ -238,13 +240,6 @@ void Board::Update() {
 				promotingPawn = true;
 				PromotePawn(promotionPiece, promotionPieces[id]->type);
 			}
-			/*for (auto& piece : promotionPieces) {
-				if (id!=-1) {
-					promotingPawn = true;
-					PromotePawn(promotionPiece, promotionPieces->type);
-				}
-				piece->Update();
-			}*/
 		}
 		else {
 			//preveri za klik figure
@@ -294,7 +289,6 @@ void Board::Update() {
 
 	}
 	else {
-		std::cout << "GAME OVER" << std::endl;
 		quitButton.Update();
 		if (quitButton.CheckMouseClick())
 			gameQuit = true;
@@ -326,56 +320,67 @@ void Board::RenderText() {
 }
 void Board::MovePiece(Player& playerTeam, Player& enemyTeam) {
 	//premakne figuro
-	int cnt = 0;
-	int id;
-	for (int j = 0; j < 8; j++) {
-		for (int k = 0; k < 8; k++) {
-			Piece* ptPiece = playerTeam.MovePiece();
-			if (ptPiece != NULL) {
-				sound->ChangeAudio(Assets::GetSound("Files/Audio/move-self.mp3"));
-				sound->Play();
-				if (ptPiece->type == King && !playerTeam.hasCastled) {
-					int x1 = 6, x2 = 2;
-					if (!team) {
-						x1 = 5;
-						x2 = 1;
+	Piece* ptPiece = playerTeam.MovePiece();
+	if (ptPiece != NULL) {
+		int cnt = 0;
+		int id = 0;
+		for (int j = 0; j < 8; j++) {
+			for (int k = 0; k < 8; k++) {
+				if (ptPiece->point.xCoord == k && ptPiece->point.yCoord == j) {
+					sound->ChangeAudio(Assets::GetSound("Files/Audio/move-self.mp3"));
+					sound->Play();
+					if (ptPiece->type == King && !playerTeam.hasCastled) {
+						int x1 = 6, x2 = 2;
+						if (!team) {
+							x1 = 5;
+							x2 = 1;
+						}
+						if (ptPiece->point == Point(x1, 7) || ptPiece->point == Point(x2, 7)) {
+							calc::Castle(playerTeam, enemyTeam, ptPiece->point, team);
+							//sound->ChangeAudio(Assets::GetSound("Files/Audio/castle.mp3"));
+						}
+						playerTeam.hasCastled = true;
 					}
-					if (ptPiece->point == Point(x1, 7) || ptPiece->point == Point(x2, 7)) {
-						calc::Castle(playerTeam, enemyTeam, ptPiece->point, team);
-						//sound->ChangeAudio(Assets::GetSound("Files/Audio/castle.mp3"));
+					if (team) {
+						PieceMove prevPoint = History::Convert(ptPiece->prevPoint.xCoord, ptPiece->prevPoint.yCoord, ptPiece->ID, team);
+						id = History::AddMove(History::Convert(k, j, ptPiece->ID, team));
+						std::cout << std::endl;
+						std::cout << char(prevPoint.alp) << " : " << prevPoint.num << std::endl;
+						std::cout << char(History::GetMove(id).alp) << " : " << History::GetMove(id).num << std::endl;
 					}
-					playerTeam.hasCastled = true;
-				}
-				if (team)
-					id = History::AddMove(History::Convert(k, j, ptPiece->ID, team));
-				else
-					id = History::AddMove(History::Convert(7 - k, 7 - j, ptPiece->ID, team));
-				ptPiece->AddHistory(History::GetMove(id));
-				std::cout << char(History::GetMove(id).alp) << " : " << History::GetMove(id).num << std::endl;
-				for (int l = 0; l < 16; l++) {
-					//preveri ce je igralec pojedel nasprotnikovo figuro
-					if (enemyTeam.pieces[l] != NULL && enemyTeam.pieces[l]->point.xCoord == ptPiece->point.xCoord &&
-						enemyTeam.pieces[l]->point.yCoord == ptPiece->point.yCoord) {
-						EatPiece(enemyTeam, l);
-						//sound->ChangeAudio(Assets::GetSound("Files/Audio/capture.mp3"));
-						break;
+					else {
+						PieceMove prevPoint = History::Convert(7-ptPiece->prevPoint.xCoord, 7-ptPiece->prevPoint.yCoord, ptPiece->ID, team);
+						id = History::AddMove(History::Convert(7 - k, 7 - j, ptPiece->ID, team));
+						std::cout << std::endl;
+						std::cout << char(prevPoint.alp) << " : " << prevPoint.num << std::endl;
+						std::cout << char(History::GetMove(id).alp) << " : " << History::GetMove(id).num << std::endl;
+					}
+					ptPiece->AddHistory(History::GetMove(id));
+					for (int l = 0; l < 16; l++) {
+						//preveri ce je igralec pojedel nasprotnikovo figuro
+						if (enemyTeam.pieces[l] != NULL && enemyTeam.pieces[l]->point.xCoord == ptPiece->point.xCoord &&
+							enemyTeam.pieces[l]->point.yCoord == ptPiece->point.yCoord) {
+							EatPiece(enemyTeam, l);
+							//sound->ChangeAudio(Assets::GetSound("Files/Audio/capture.mp3"));
+							break;
+						}
+					}
+					tiles[cnt]->Available(false);
+					if (ptPiece->type == Pawn && ptPiece->point.yCoord == 0) {
+						promotingPawn = true;
+						promotionPiece = ptPiece;
+						return;
+					}
+					else {
+						promotingPawn = false;
+						team = !team;
+						//obrni plosco
+						RotateBoard();
+						return;
 					}
 				}
-				tiles[cnt]->Available(false);
-				if (ptPiece->type == Pawn && ptPiece->point.yCoord == 0) {
-					promotingPawn = true;
-					promotionPiece = ptPiece;
-					return;
-				}
-				else {
-					promotingPawn = false;
-					team = !team;
-					//obrni plosco
-					RotateBoard();
-					return;
-				}
+				cnt++;
 			}
-			cnt++;
 		}
 	}
 }
@@ -386,22 +391,22 @@ void Board::MovePiece(Player& playerTeam, Player& enemyTeam) {
 //	piecePoint.xCoord = selectedPiece->point.xCoord;
 //	piecePoint.yCoord = selectedPiece->point.yCoord;
 //
-//	int kingPieceID = -1;
+//	Piece* kingPiece = 0;
 //	//poisce figuro kralj
 //	for (int i = 0; i < 16; i++)
 //		if (team1.pieces[i] != NULL && team1.pieces[i]->type == King) {
-//			kingPieceID = i;
+//			kingPiece = team1.pieces[i];
 //		}
 //	//preveri ali je igralec v sahu
-//	if (team1.pieces[kingPieceID] != NULL) {
-//		team1.isInCheck = calc::CalculateCheck(team1, team2, team1.pieces[kingPieceID]->point);
+//	if (kingPiece != NULL) {
+//		team1.isInCheck = calc::CalculateCheck(team1, team2, kingPiece->point);
 //	}
 //	//preveri ali je igralec v sah matu
 //	if (team1.isInCheck) {
 //		//preveri koliko moznih potez ima igralec v sahu
 //		for (auto& piece : team1.pieces) {
 //			if (piece != NULL) {
-//				availableTiles = calc::CalculateDefendKing(team1, team2, tiles, piece, team1.pieces[kingPieceID]->point);
+//				availableTiles = calc::CalculateDefendKing(team1, team2, tiles, piece, kingPiece->point);
 //				if (availableTiles.size() > 0)
 //					break;
 //			}
@@ -411,7 +416,7 @@ void Board::MovePiece(Player& playerTeam, Player& enemyTeam) {
 //			team1.isCheckmated = true;
 //		else {
 //			//poracuna vse mozne poteze ki preprecijo sah oz. sahmat
-//			availableTiles = calc::CalculateDefendKing(team1, team2, tiles, selectedPiece, team1.pieces[kingPieceID]->point);
+//			availableTiles = calc::CalculateDefendKing(team1, team2, tiles, selectedPiece, kingPiece->point);
 //
 //			for (auto& availableTile : availableTiles)
 //				FindTile(availableTile.point)->Available(true);
@@ -477,7 +482,7 @@ void Board::MovePiece(Player& playerTeam, Player& enemyTeam) {
 //
 //		for (auto& availablePoint : availableTiles) {
 //			selectedPiece->point = availablePoint.point;
-//			if (calc::CalculateCheck(team1, team2, team1.pieces[kingPieceID]->point)) {
+//			if (calc::CalculateCheck(team1, team2, kingPiece->point)) {
 //				FindTile(availablePoint.point)->Available(false);
 //			}
 //			for (int i = 0; i < 16;i++) {
@@ -485,7 +490,7 @@ void Board::MovePiece(Player& playerTeam, Player& enemyTeam) {
 //					tmpPiece = new Piece(*team2.pieces[i]);
 //					delete team2.pieces[i];
 //					team2.pieces[i] = NULL;
-//					if (!calc::CalculateCheck(team1, team2, team1.pieces[kingPieceID]->point)) {
+//					if (!calc::CalculateCheck(team1, team2, kingPiece->point)) {
 //						FindTile(availablePoint.point)->Available(true);
 //					}
 //					team2.pieces[i] = new Piece(*tmpPiece);

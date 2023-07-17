@@ -68,6 +68,7 @@ void Piece::Update() {
 	Render();
 }
 void Piece::Move(Point _point) {
+	prevPoint = point;
 	point = _point;
 	dest.x = xStart + point.xCoord * TileSize;
 	dest.y = yStart + point.yCoord * TileSize;

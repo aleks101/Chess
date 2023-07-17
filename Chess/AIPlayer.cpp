@@ -1,20 +1,17 @@
 #include "AIPlayer.h"
 
 AIPlayer::AIPlayer(Tile* tiles[64], int _depthLevel) : 
-	Player(tiles), depthLevel(0) {
-	std::cout << "AI construct\n";
+	Player(tiles), depthLevel(0), pieceToMoveID(0) {
 	evaluation.score = 0;
 	evaluation.moveID = 0;
 	isPieceSelected = false;
 	srand(time(NULL));
 }
-AIPlayer::~AIPlayer() {
-	std::cout << "AI deconstruct\n";
-}
+AIPlayer::~AIPlayer() {}
 void AIPlayer::SelectPiece() {
 	hasPieceMoved = false;
 	if (!isPieceSelected) {
-		/*int id = rand() % 16;
+		int id = rand() % 16;
 		while (pieces[id] == NULL) {
 			id = rand() % 16;
 		}
@@ -23,8 +20,8 @@ void AIPlayer::SelectPiece() {
 		isPieceSelected = true;
 		for (int i = 0; i < 16; i++)
 			if (i != id && pieces[i] != NULL)
-				pieces[i]->isSelected = false;*/
-		std::vector<Tile*> availableTiles = GetAvailableTiles();
+				pieces[i]->isSelected = false;
+		/*std::vector<Tile*> availableTiles = GetAvailableTiles();
 
 		if (pieces[depthLevel] != NULL && depthLevel < 16) {
 			pieces[depthLevel]->isSelected = true;
@@ -45,14 +42,14 @@ void AIPlayer::SelectPiece() {
 			for (int i = 0; i < 16; i++)
 				if (i != depthLevel && pieces[i] != NULL)
 					pieces[i]->isSelected = false;
-		}
+		}*/
 	}
 }
 Piece* AIPlayer::MovePiece() {
 	if (isPieceSelected) {
 		isPieceSelected = false;
 		if (pieces[pieceToMoveID] != NULL) {
-			int id;
+			//int id;
 			std::vector<Tile*> availableTiles = GetAvailableTiles();
 			if (availableTiles.size() > 0) {
 				/*id = rand() % availableTiles.size();

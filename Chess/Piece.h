@@ -10,12 +10,16 @@
 class Piece: public Object
 {
 private:
-	SDL_Rect center;
 	std::vector<PieceMove> moveHistory;
 public:
 	Piece(SDL_Renderer* ren, SDL_Texture* texture, int size, Point _pos, int _type, bool _isWhite);
 	Piece(const Piece& piece);
-	Piece(){}
+	Piece(){
+		isSelected = false;
+		type = -1;
+		ID = 0;
+		isWhite = false;
+	}
 
 	void Move(Point _point);
 	void Update();

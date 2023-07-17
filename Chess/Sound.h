@@ -48,11 +48,15 @@ bool Sound<T>::CheckIfAudioIsPlaying() {
 }
 template<class T>
 void Sound<T>::Play(int loops) {
+	if (audio == NULL)
+		return;
 	Mix_Volume(channel, volume);
 	Mix_PlayChannel(channel, audio, loops);
 }
 template<class T>
 void Sound<T>::Play() {
+	if (audio == NULL)
+		return;
 	Mix_Volume(channel, volume);
 	Mix_PlayChannel(channel, audio, 0);
 }

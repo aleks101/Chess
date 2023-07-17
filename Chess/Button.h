@@ -17,7 +17,9 @@ public:
 		text = button.text;
 		dest = button.dest;
 	}
-	Button() {
+	Button() : ev(NULL), yMouse(0), xMouse(0)
+	{
+
 	}
 	void Render();
 	void Update();

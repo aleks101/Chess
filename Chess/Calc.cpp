@@ -421,22 +421,22 @@ namespace calc {
 		piecePoint.xCoord = selectedPiece->point.xCoord;
 		piecePoint.yCoord = selectedPiece->point.yCoord;
 
-		int kingPieceID = -1;
+		Piece* kingPiece = NULL;
 		//poisce figuro kralj
 		for (int i = 0; i < 16; i++)
 			if (team1.pieces[i] != NULL && team1.pieces[i]->type == King) {
-				kingPieceID = i;
+				kingPiece = team1.pieces[i];
 			}
 		//preveri ali je igralec v sahu
-		if (team1.pieces[kingPieceID] != NULL) {
-			team1.isInCheck = calc::CalculateCheck(team1, team2, team1.pieces[kingPieceID]->point);
+		if (kingPiece != NULL) {
+			team1.isInCheck = calc::CalculateCheck(team1, team2, kingPiece->point);
 		}
 		//preveri ali je igralec v sah matu
 		if (team1.isInCheck) {
 			//preveri koliko moznih potez ima igralec v sahu
 			for (auto& piece : team1.pieces) {
 				if (piece != NULL) {
-					availableTiles = calc::CalculateDefendKing(team1, team2, tiles, piece, team1.pieces[kingPieceID]->point);
+					availableTiles = calc::CalculateDefendKing(team1, team2, tiles, piece, kingPiece->point);
 					if (availableTiles.size() > 0)
 						break;
 				}
@@ -446,7 +446,7 @@ namespace calc {
 				team1.isCheckmated = true;
 			else {
 				//poracuna vse mozne poteze ki preprecijo sah oz. sahmat
-				availableTiles = calc::CalculateDefendKing(team1, team2, tiles, selectedPiece, team1.pieces[kingPieceID]->point);
+				availableTiles = calc::CalculateDefendKing(team1, team2, tiles, selectedPiece, kingPiece->point);
 
 				for (auto& availableTile : availableTiles)
 					FindTile(tiles, availableTile.point)->Available(true);
@@ -512,7 +512,7 @@ namespace calc {
 
 			for (auto& availablePoint : availableTiles) {
 				selectedPiece->point = availablePoint.point;
-				if (calc::CalculateCheck(team1, team2, team1.pieces[kingPieceID]->point)) {
+				if (calc::CalculateCheck(team1, team2, kingPiece->point)) {
 					FindTile(tiles, availablePoint.point)->Available(false);
 				}
 				for (int i = 0; i < 16; i++) {
@@ -520,7 +520,7 @@ namespace calc {
 						tmpPiece = new Piece(*team2.pieces[i]);
 						delete team2.pieces[i];
 						team2.pieces[i] = NULL;
-						if (!calc::CalculateCheck(team1, team2, team1.pieces[kingPieceID]->point)) {
+						if (!calc::CalculateCheck(team1, team2, kingPiece->point)) {
 							FindTile(tiles, availablePoint.point)->Available(true);
 						}
 						team2.pieces[i] = new Piece(*tmpPiece);

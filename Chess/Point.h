@@ -4,7 +4,7 @@ class Point
 {
 public:
 	int xCoord, yCoord;
-	Point(){}
+	Point() : xCoord(0), yCoord(0) { }
 	Point(int x, int y) { xCoord = x; yCoord = y; }
 	Point(const Point& _point) { xCoord = _point.xCoord; yCoord = _point.yCoord; }
 	Point operator+(Point point) {

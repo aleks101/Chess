@@ -15,15 +15,14 @@ public:
 			pieces[i] = NULL;
 		for (int i = 0; i < 64; i++)
 			tiles[i] = &*_tiles[i];
-		std::cout << "PLAYER construct\n";
 		hasPieceMoved = false;
 		isPieceSelected = false;
+		enemyPlayer = NULL;
 	}
 	virtual ~Player() {
 		for (int i = 0; i < 16; i++)
 			if (pieces[i] != NULL)
 				delete pieces[i];
-		std::cout << "PLAYER deconstruct\n";
 	}
 	virtual void SelectPiece() = 0;
 	virtual void UnSelectPieces() {

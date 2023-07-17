@@ -1,12 +1,8 @@
 #include "HumanPlayer.h"
 
 HumanPlayer::HumanPlayer(SDL_Event& _ev, Tile* _tiles[64], int& _xMouse, int& _yMouse) :
-	ev(&_ev), Player(_tiles), xMouse(&_xMouse), yMouse(&_yMouse), mouseClick(false) {
-	std::cout << "HUMAN CONSTRUCT\n";
-}
-HumanPlayer::~HumanPlayer() {
-	std::cout << "HUMANPLAYER deconstruct\n";
-}
+	ev(&_ev), Player(_tiles), xMouse(&_xMouse), yMouse(&_yMouse), mouseClick(false) { }
+HumanPlayer::~HumanPlayer() {}
 void HumanPlayer::SelectPiece() {
 	hasPieceMoved = false;
 	for (int i = 0; i < 16; i++) {

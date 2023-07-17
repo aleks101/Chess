@@ -43,7 +43,7 @@ private:
 	bool whiteWantsToDraw, blackWantsToDraw;
 	SDL_Event* ev;
 public:
-	Board(SDL_Renderer* ren, SDL_Event* _ev);
+	Board(SDL_Renderer* ren, SDL_Event* _ev, bool AI);
 	~Board();
 	void Render();
 	void Update();
@@ -59,7 +59,7 @@ public:
 	Tile* FindTile(Point point);
 	Piece* FindPiece(Point point);
 
-	/*void CalculateValidMoves(Player& playerTeam, Player& enemyTeam, Piece* selectedPiece);*/
+	//void CalculateValidMoves(Player& playerTeam, Player& enemyTeam, Piece* selectedPiece);
 
 	SDL_Rect GetDest();
 	SDL_Rect GetSrc();

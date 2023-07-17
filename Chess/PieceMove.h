@@ -9,7 +9,7 @@ public:
 		pieceID = pieceMove.pieceID;
 		team = pieceMove.team;
 	}
-	PieceMove() { ; }
+	PieceMove() { num = 0; alp = 0; pieceID = 0; team = 0; }
 
 	int num;
 	char alp;

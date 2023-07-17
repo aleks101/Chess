@@ -28,22 +28,19 @@ bool isRunning = false;
 
 struct GameFile {
     Button button;
+    Button deleteButton;
     string fileName;
-    GameFile(Button _button, string _filename) : button(_button), fileName(_filename) { }
+    GameFile(Button _button, Button _deleteButton, string _filename) : button(_button), deleteButton(_deleteButton), fileName(_filename) { }
 };
 
 
 int main(int argc, char* argv[1])
-{
-    //problem z kraljom ko poje figuro na polju ki je hkrati pod napadom
-    
+{    
     // current date/time based on current system
     time_t now = time(0);
 
     // convert now to string form
     char* dt = ctime(&now);
-
-    cout << "The local date and time is: " << dt << endl;
 
     Setup();
 
@@ -62,10 +59,10 @@ int main(int argc, char* argv[1])
     Board* chessboard=NULL;
     Replay* replay=NULL;
 
-    Button startPlaying(App::renderer, ev, Text(App::renderer, 100, 150, Assets::GetFont("Files/Fonts/8-bit-operator/8bitOperatorPlus8-Regular.ttf"), "Igraj", { 255, 255, 255 }));
     Button viewGames(App::renderer, ev, Text(App::renderer, 100, 300, Assets::GetFont("Files/Fonts/8-bit-operator/8bitOperatorPlus8-Regular.ttf"), "Pregled iger", { 255, 255, 255 }));
     Button back(App::renderer, ev, Text(App::renderer, 1000, 600, Assets::GetFont("Files/Fonts/8-bit-operator/8bitOperatorPlus8-Regular.ttf"), "Nazaj", { 255, 255, 255 }));
-
+    Button humanButton(App::renderer, ev, Text(App::renderer, 100, 150, Assets::GetFont("Files/Fonts/8-bit-operator/8bitOperatorPlus8-Regular.ttf"), "Igraj proti cloveku", { 255, 255, 255 }));
+    Button AIButton(App::renderer, ev, Text(App::renderer, 100, 175, Assets::GetFont("Files/Fonts/8-bit-operator/8bitOperatorPlus8-Regular.ttf"), "Igraj proti robotu", { 255, 255, 255 }));
     Button _back = back;
 
     vector<GameFile> gameFiles;
@@ -74,8 +71,9 @@ int main(int argc, char* argv[1])
 
     int y = 1;
     for (const auto& entry : fs::directory_iterator(path)) {
-        gameFiles.push_back(GameFile(Button(App::renderer, ev, Text(App::renderer, 100, 600 - 50 * y, Assets::GetFont("Files/Fonts/8-bit-operator/8bitOperatorPlus8-Regular.ttf"), entry.path().string() + " : " + dt, {255, 255, 255})), entry.path().string()));
-        std::cout << entry.path() << std::endl;
+        gameFiles.push_back(GameFile(Button(App::renderer, ev, Text(App::renderer, 100, 600 - 50 * y, Assets::GetFont("Files/Fonts/8-bit-operator/8bitOperatorPlus8-Regular.ttf"), entry.path().string() + " : " + dt, {255, 255, 255})),
+                                    Button(App::renderer, ev, Text(App::renderer, 800, 600 - 50 * y, Assets::GetFont("Files/Fonts/8-bit-operator/8bitOperatorPlus8-Regular.ttf"), "Delete", {255, 255, 255})),
+                                    entry.path().string()));
         y++;
     }
     string fileName = "igra" + to_string(y) + ".save";
@@ -86,8 +84,8 @@ int main(int argc, char* argv[1])
 
     while (isRunning) {
         //SDL_WaitEvent(ev);
-        SDL_PollEvent(ev);
-        //if (SDL_PollEvent(ev)) {
+        //SDL_PollEvent(ev);
+        if (SDL_PollEvent(ev)) {
             isRunning = App::ApplicationCheckQuit(*ev);
 
             if (play) {
@@ -103,12 +101,18 @@ int main(int argc, char* argv[1])
                 }
             }
             else if (!viewGame) {
-                startPlaying.Update();
+                humanButton.Update();
+                AIButton.Update();
                 viewGames.Update();
-                if (startPlaying.CheckMouseClick()) {
+                if (humanButton.CheckMouseClick()) {
                     play = true;
-                    chessboard = new Board(App::renderer, ev);
-                    cout << "GAME PLAY" << endl;
+                    chessboard = new Board(App::renderer, ev, false);
+                    cout << "GAME PLAY HUMAN" << endl;
+                }
+                else if (AIButton.CheckMouseClick()) {
+                    play = true;
+                    chessboard = new Board(App::renderer, ev, true);
+                    cout << "GAME PLAY AI" << endl;
                 }
                 if (viewGames.CheckMouseClick()) {
                     cout << "VIEW GAME" << endl;
@@ -122,12 +126,18 @@ int main(int argc, char* argv[1])
                     isGameViewed = false;
                 }
                 if (!isGameViewed) {
-                    for (auto& file : gameFiles) {
-                        file.button.Update();
-                        if (file.button.CheckMouseClick()) {
+                    for (int i = 0; i < gameFiles.size(); i++) {
+                        gameFiles[i].deleteButton.Update();
+                        if (gameFiles[i].deleteButton.CheckMouseClick()) {
+                            Data::DeleteFile(gameFiles[i].fileName);
+                            gameFiles.erase(gameFiles.begin() + i);
+                        }
+                        gameFiles[i].button.Update();
+                        if (gameFiles[i].button.CheckMouseClick()) {
                             isGameViewed = true;
-                            cout << file.fileName << endl;
-                            replay = new Replay(App::renderer, ev, Data::ReadFromFile(file.fileName));
+                            cout << gameFiles[i].fileName << endl;
+                            replay = new Replay(App::renderer, ev, Data::ReadFromFile(gameFiles[i].fileName));
+
                         }
                     }
                 }
@@ -136,7 +146,7 @@ int main(int argc, char* argv[1])
                 }
             }
             App::ApplicationRender();
-        //}
+        }
     }
     Clean();
     
