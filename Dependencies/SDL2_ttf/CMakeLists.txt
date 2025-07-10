@@ -1,8 +1,8 @@
 include(FetchContent)
 
 # Paths to your FreeType build
-set(FREETYPE_INCLUDE_DIRS "C:/Developer/Libraries/ft2133/freetype-2.13.3/include" CACHE PATH "Path to FreeType headers")
-set(FREETYPE_LIBRARY "C:/Developer/Libraries/ft2133/freetype-2.13.3/objs/freetype.a" CACHE FILEPATH "Path to FreeType library")
+set(FREETYPE_INCLUDE_DIRS "path/to/freetype/include" CACHE PATH "Path to FreeType headers")
+set(FREETYPE_LIBRARY "path/to/freetype/objs/freetype.a" CACHE FILEPATH "Path to FreeType library")
 
 #find_library(FREETYPE freetype PATHS C:/Developer/Libraries/ft2133/freetype-2.13.3/objs)
 #message(STATUS "Found freetype: ${FREETYPE}")
