@@ -28,6 +28,6 @@ Project root folder:
 mkdir build
 cd build
 
-cmake .. -G "generator"
+cmake .. -G "set your generator"
 make
 ```
