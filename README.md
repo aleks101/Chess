@@ -6,7 +6,7 @@ Git download https://git-scm.com/downloads/win
 CMake download https://cmake.org/download/
 
 ## Compiler
-Make sure to have a compiler installed on your computer
+Make sure to have a compiler installed on your computer https://www.mingw-w64.org/downloads/
 
 ## Installed FreeType library
 FreeType library repository https://github.com/freetype/freetype/tree/master
