@@ -1,4 +1,7 @@
 # Requirements
+## Git
+Git download https://git-scm.com/downloads/win
+
 ## Cmake
 CMake download https://cmake.org/download/
 
