@@ -19,6 +19,7 @@ set(FREETYPE_LIBRARY "C:/Developer/Libraries/ft2133/freetype-2.13.3/objs/freetyp
 If you have installed and build all the dependencies, you can now build the game. Run cmake script from the build folder and then make to compile the program, after compiling the .exe file will be generated inside build/bin folder
 
 cmake generators https://cmake.org/cmake/help/latest/manual/cmake-generators.7.html
+
 Project root folder:
 ```
 mkdir build
