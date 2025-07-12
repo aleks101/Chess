@@ -21,6 +21,8 @@ set(FREETYPE_LIBRARY "path/to/freetype/objs/freetype.a" CACHE FILEPATH "Path to 
 # Building/compiling the project
 If you have installed and build all the dependencies, you can now build the game. Run cmake script from the build folder and then make to compile the program, after compiling the .exe file will be generated inside build/bin folder
 
+**To successfuly run the .exe file you will have to copy the Files folder into the folder that contains the .exe file**
+
 cmake generators https://cmake.org/cmake/help/latest/manual/cmake-generators.7.html
 
 Project root folder:
@@ -31,4 +33,4 @@ cd build
 cmake .. -G "set your generator"
 make
 ```
-To successfuly run the .exe file you will have to copy the Files folder into the folder that contains the .exe file
+
