@@ -31,3 +31,4 @@ cd build
 cmake .. -G "set your generator"
 make
 ```
+To successfuly run the .exe file you will have to copy the Files folder into the folder that contains the .exe file
