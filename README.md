@@ -23,6 +23,7 @@ If you have installed and build all the dependencies, you can now build the game
 
 **To successfuly run the .exe file you will have to copy the Files folder into the folder that contains the .exe file**
 
+
 cmake generators https://cmake.org/cmake/help/latest/manual/cmake-generators.7.html
 
 Project root folder:
