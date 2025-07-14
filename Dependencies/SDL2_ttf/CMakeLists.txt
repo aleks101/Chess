@@ -1,14 +1,5 @@
 include(FetchContent)
 
-# Paths to your FreeType build
-set(FREETYPE_INCLUDE_DIRS "path/to/freetype/include" CACHE PATH "Path to FreeType headers")
-set(FREETYPE_LIBRARY "path/to/freetype/objs/freetype.a" CACHE FILEPATH "Path to FreeType library")
-
-#find_library(FREETYPE freetype PATHS C:/Developer/Libraries/ft2133/freetype-2.13.3/objs)
-#message(STATUS "Found freetype: ${FREETYPE}")
-
-#target_link_libraries(Chess PUBLIC ${FREETYPE})
-
 # Now fetch SDL2_ttf
 FetchContent_Declare(
     SDL2_ttf

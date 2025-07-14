@@ -34,7 +34,7 @@ private:
 	Button drawButton;
 	Button quitButton;
 
-	bool promotingPawn;
+	bool promotingPawn = false;
 	int xMouse, yMouse;
 	bool mousePressed;
 	bool pieceSelected;
