@@ -12,6 +12,7 @@ Make sure to have a compiler installed on your computer https://www.mingw-w64.or
 Run cmake script from the build folder and then make to compile the program, after compiling the .exe file will be generated inside build/bin folder
 
 **To successfuly run the .exe file you will have to copy the Files folder and the SDL2 dlls into the folder that contains the .exe file**
+
 **In the Files folder create a Save folder, so the game doesn't crash!!!**
 
 
